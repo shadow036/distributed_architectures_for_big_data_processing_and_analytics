@@ -2,5 +2,6 @@
 *input*
 *output*
 *.idea*
-*data/*
+*data*
 *.crc*
+*checkpoint*
