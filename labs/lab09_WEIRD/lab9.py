@@ -14,7 +14,7 @@ ss.udf.register("my_len", lambda text: len(text))
 # this is weird...
 
 if __name__ == '__main__':
-	training = ss.read.load('input_lab9/ReviewsSample.csv', format='csv', header=True, inferSchema=True)
+	training = ss.read.load('input_lab9/Reviews.csv', format='csv', header=True, inferSchema=True)
 
 	assembler = VectorAssembler(inputCols=["feature"],outputCol="features")
 	transformer = SQLTransformer(statement="SELECT Text, my_len(Text) AS feature, discriminate(HelpfulnessNumerator, HelpfulnessDenominator) AS label FROM __THIS__ WHERE HelpfulnessNumerator > 0 OR HelpfulnessDenominator > 0")
