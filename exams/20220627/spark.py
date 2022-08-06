@@ -17,9 +17,9 @@ applied_patches = sc.textFile('input/applied_patches.txt')  # (patch_id,server_i
 
 # PART 1
 serverId_operatingSystem = servers.map(lambda line: (line.split(',')[0], line.split(',')[1]))
-serverId_numberOfAppliedPatches = applied_patches.\
-    map(lambda line: (line.split(',')[1], check_year(line.split(',')[2]))).\
-    reduceByKey(lambda v1, v2: v1 + v2).filter(lambda my_tuple: my_tuple[1] > 0)
+serverId_numberOfAppliedPatches = applied_patches.filter(lambda line: line.split(',')[2].split('/')[0] == '2022').\
+    map(lambda line: (line.split(',')[1], 1)).\
+    reduceByKey(lambda v1, v2: v1 + v2)
 maxNumberOfAppliedPatches = serverId_numberOfAppliedPatches.map(lambda my_tuple: my_tuple[1]).max()
 result = serverId_numberOfAppliedPatches.filter(lambda my_tuple: my_tuple[1] == maxNumberOfAppliedPatches).\
     join(serverId_operatingSystem).map(lambda my_tuple: (my_tuple[0], my_tuple[1][1]))
