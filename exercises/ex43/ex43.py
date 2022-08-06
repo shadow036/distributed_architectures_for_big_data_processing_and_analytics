@@ -45,9 +45,16 @@ stationId__timestamp_flag = readings.map(lambda line: (line.split(',')[0],
                            (line.split(',')[1] + ' at ' + line.split(',')[2] + ':' + line.split(',')[3],
                             int(line.split(',')[5])))).map(lambda t: (t[0], (t[1][0], 0 if t[1][1] == 0 else 1)))
 neighbor_station = neighbors.flatMap(lambda line: generate_list(line))
-stationId__timestamp_flag.join(neighbor_station).map(lambda t: (t[1][1], t[1][0])).join(stationId__timestamp_flag).\
+solution = stationId__timestamp_flag.join(neighbor_station).map(lambda t: (t[1][1], t[1][0])).join(stationId__timestamp_flag).\
     filter(lambda t: t[1][0][0] == t[1][1][0]).map(lambda t: ((t[0], t[1][0][0]), (t[1][0][1], t[1][1][1]))).\
-    reduceByKey(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).filter(lambda t: t[1][0] + t[1][1] == 0).\
-    coalesce(1).saveAsTextFile('output_part_7/')
+    reduceByKey(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).filter(lambda t: t[1][0] + t[1][1] == 0).map(lambda t: (t[0], None))
+result7 = solution.\
+    join(readings.map(lambda line: ((line.split(',')[0], (line.split(',')[1] + ' at ' + line.split(',')[2] + ':' +
+                                                          line.split(',')[3])), (line.split(',')[4],
+                                                                                 line.split(',')[5])))).\
+    map(lambda t: t[0][0] + ',' + t[0][1].split(' at ')[0] + ',' + t[0][1].split(' at ')[1].split(':')[0] + ',' +
+                  t[0][1].split(' at ')[1].split(':')[1] + ',' + t[1][1][0] + ',' + t[1][1][1])
+print('\n\n\n\n\n', result7.count(), '\n\n\n\n\n')
+result7.coalesce(1).saveAsTextFile('output_part_7/')
 
 sc.stop()
